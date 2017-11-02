@@ -2,7 +2,6 @@ import google_auth_oauthlib.flow
 import google.oauth2.credentials
 import oauth2client
 from googleapiclient.discovery import build
-
 from flask import Flask, render_template, session, redirect, request, url_for
 
 app=Flask(__name__)
@@ -100,8 +99,6 @@ def processAuthCallback():
     session['credentials'] = credentials.access_token
 
     return redirect(url_for('processLogin'))
-
-
 
 
 if __name__== "__main__":
