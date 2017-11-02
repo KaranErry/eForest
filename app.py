@@ -97,7 +97,7 @@ def processAuthCallback():
     # TODO: When migrating to production, store these credentials in a persistent database instead.
     credentials = flow.credentials
     # session['credentials'] = credentials_to_dict(credentials)
-    session['credentials'] = credentials
+    session['credentials'] = credentials.access_token
 
     return redirect(url_for('processLogin'))
 
