@@ -42,6 +42,7 @@ def deanForm():
 def login():
     global loginJustBegun
     loginJustBegun = True
+    print(loginJustBegun)
     return render_template('login.html')
 
 # Process OAuth authorization
@@ -49,6 +50,7 @@ def login():
 def processLogin():
     if loginJustBegun:
         session.clear()
+    print(loginJustBegun)
     if 'credentials' not in session:
         print("IIIIIIIIIIIIIII creds not in session")
         return redirect(url_for('authorize'))
