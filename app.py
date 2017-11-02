@@ -1,6 +1,7 @@
-import google.oauth2.credentials
 import google_auth_oauthlib.flow
+import google.oauth2.credentials
 import oauth2client
+from googleapiclient.discovery import build
 
 from flask import Flask, render_template, session, redirect, request, url_for
 
@@ -47,6 +48,7 @@ def processLogin():
 
     # Load credentials from the session:
     credentials == google.oauth2.credentials.Credentials(**session['credentials'])
+    userInfo = build('oauth2', 'v1', credentials=credentials)
 
 
 # Authorize using OAuth
