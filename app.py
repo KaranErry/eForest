@@ -10,7 +10,7 @@ app=Flask(__name__)
 app.secret_key = 'Random value' #TODO: Replace this secret key with an actual secure secret key.
 
 flow = None
-loginJustBegun = True
+# loginJustBegun = True
 
 @app.route('/')
 def home():
@@ -47,8 +47,8 @@ def login():
 # Process OAuth authorization
 @app.route('/login/processLogin')
 def processLogin():
-    if loginJustBegun:
-        session.clear()
+    # if loginJustBegun:
+    #     session.clear()
     if 'credentials' not in session:
         print("IIIIIIIIIIIIIII creds not in session")
         return redirect(url_for('authorize'))
@@ -108,7 +108,8 @@ def processAuthCallback():
     # flow = jsonpickle.decode(session['flow'])
     # print("XXXXXXXXXIII", type(flow))
     # Use the authorization server's response to fetch the OAuth 2.0 tokens:
-    authorization_response = request.url.strip()
+    authorization_response = request.url
+    authorization_response = authorization_response.strip()
     flow.fetch_token(authorization_response = authorization_response)
     # Store credentials in the session:
     # TODO: When migrating to production, store these credentials in a persistent database instead.
@@ -116,8 +117,8 @@ def processAuthCallback():
     # session['credentials'] = credentials_to_dict(credentials)
     session['credentials'] = jsonpickle.encode(credentials)
 
-    global loginJustBegun
-    loginJustBegun = False
+    # global loginJustBegun
+    # loginJustBegun = False
     return redirect(url_for('processLogin'))
 
 
