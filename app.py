@@ -68,7 +68,7 @@ def processLogin():
 def authorize():
     # Construct the Flow object:
     # global flow # TODO: Remove the global and ask StackOverflow why the flow.fetch_token() call in processAuthCallback() throws a "global value flow is not defined" error. Global values are apparently not great programming practice in python.
-    session.clear()
+    # session.clear()
     global flow
     flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
     'client_secret_217930784500-l9noq9hdupkormpjoamplnvsp3078q88.apps.googleusercontent.com.json',
