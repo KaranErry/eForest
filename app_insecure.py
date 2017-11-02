@@ -2,6 +2,7 @@ import google_auth_oauthlib.flow
 import google.oauth2.credentials
 import oauth2client
 from googleapiclient.discovery import build
+import os
 import jsonpickle
 
 from flask import Flask, render_template, session, redirect, request, url_for
@@ -124,4 +125,5 @@ def processAuthCallback():
 
 
 if __name__== "__main__":
-    app.run(debug=True)
+    os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
+    app.run('localhost', 8080, debug=True)
