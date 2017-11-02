@@ -50,6 +50,9 @@ def processLogin():
     credentials == google.oauth2.credentials.Credentials(**session['credentials'])
     userInfo = build('oauth2', 'v1', credentials=credentials)
 
+    # TODO: (Eventually) Since the hd parameter in the authorization can be modified by the user, check that the user signed in with a drew.edu email and if not, log them out and direct to the login landing page again.
+    # TODO: Obtain user's profile info
+    # TODO: Store user's profile info in persistent storage.
 
 # Authorize using OAuth
 @app.route('/login/authorize')
@@ -74,6 +77,7 @@ def authorize():
         access_type = 'offline',
         # Enable incremental authorization
         include_granted_scopes = 'true',
+        #
         hd = 'drew.edu'
         )
     # Store the state so the callback can verify the auth server response:
@@ -87,7 +91,7 @@ def processAuthCallback():
     # Specify the state when creating the flow in the callback so that it can verified in the authorization server response:
     state = session['state']
     # Use the authorization server's response to fetch the OAuth 2.0 tokens:
-    authorization_response = request.url
+    authorization_response = request.url.strip()
     flow.fetch_token(authorization_response = authorization_response)
     # Store credentials in the session:
     # TODO: When migrating to production, store these credentials in a persistent database instead.
