@@ -1,14 +1,14 @@
 import google_auth_oauthlib.flow
 import google.oauth2.credentials
 import oauth2client
-from googleapiclient.discovery import build
+from googleapiclien.discovery import build
 
 from flask import Flask, render_template, session, redirect, request, url_for
 
 app=Flask(__name__)
 app.secret_key = 'Random value' #TODO: Replace this secret key with an actual secure secret key.
 
-flow = None
+global flow
 
 @app.route('/')
 def home():
