@@ -105,4 +105,5 @@ def processAuthCallback():
 
 
 if __name__== "__main__":
-    app.run(debug=True)
+    os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
+    app.run('localhost', 8080,debug=True)
