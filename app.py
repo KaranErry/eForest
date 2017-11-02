@@ -8,7 +8,7 @@ from flask import Flask, render_template, session, redirect, request, url_for
 app=Flask(__name__)
 app.secret_key = 'Random value' #TODO: Replace this secret key with an actual secure secret key.
 
-flow = None
+# flow = None
 
 @app.route('/')
 def home():
@@ -59,20 +59,20 @@ def processLogin():
 def authorize():
     # Construct the Flow object:
     # global flow # TODO: Remove the global and ask StackOverflow why the flow.fetch_token() call in processAuthCallback() throws a "global value flow is not defined" error. Global values are apparently not great programming practice in python.
-    global flow
-    flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
+    # global flow
+    sessions['flow'] = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
     'client_secret_217930784500-l9noq9hdupkormpjoamplnvsp3078q88.apps.googleusercontent.com.json',
     scopes = ['profile', 'email', 'openid']
     )
-    print(type(flow))
+    print(type(sessions['flow']))
     # flow = oauth2client.flow_from_clientsecrets(
     # 'client_secret_217930784500-l9noq9hdupkormpjoamplnvsp3078q88.apps.googleusercontent.com.json',
     # scope = ['profile', 'email', 'openid']
     # )
     # Set the Redirect URI:
-    flow.redirect_uri = url_for('processAuthCallback', _external = True)
+    sessions['flow'].redirect_uri = url_for('processAuthCallback', _external = True)
     # Generate URL for request to Google's OAuth 2.0 server:
-    authorization_url, state = flow.authorization_url(
+    authorization_url, state = sessions['flow'].authorization_url(
         # Enable offline access so as to be able to refresh an access token withou re-prompting the user for permission
         access_type = 'offline',
         # Enable incremental authorization
@@ -92,10 +92,10 @@ def processAuthCallback():
     state = session['state']
     # Use the authorization server's response to fetch the OAuth 2.0 tokens:
     authorization_response = request.url.strip()
-    flow.fetch_token(authorization_response = authorization_response)
+    sessions['flow'].fetch_token(authorization_response = authorization_response)
     # Store credentials in the session:
     # TODO: When migrating to production, store these credentials in a persistent database instead.
-    credentials = flow.credentials
+    credentials = sessions['flow'].credentials
     # session['credentials'] = credentials_to_dict(credentials)
     session['credentials'] = credentials.access_token
 
