@@ -7,10 +7,11 @@ import jsonpickle
 from flask import Flask, render_template, session, redirect, request, url_for
 
 app=Flask(__name__)
+# Set a secret key with which Flask will sign the session cookie:
 app.secret_key = 'Random value' #TODO: Replace this secret key with an actual secure secret key.
 
-flow = None
-# loginJustBegun = True
+# flow = None
+loginJustBegun = True
 
 @app.route('/')
 def home():
@@ -70,7 +71,7 @@ def processLogin():
 def authorize():
     # Construct the Flow object:
     # global flow # TODO: Remove the global and ask StackOverflow why the flow.fetch_token() call in processAuthCallback() throws a "global value flow is not defined" error. Global values are apparently not great programming practice in python.
-    global flow
+    # global flow
     flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
     'client_secret_217930784500-l9noq9hdupkormpjoamplnvsp3078q88.apps.googleusercontent.com.json',
     scopes = ['profile', 'email', 'openid']
@@ -104,10 +105,19 @@ def authorize():
 @app.route('/login/oauth2callback')
 def processAuthCallback():
     # Specify the state when creating the flow in the callback so that it can verified in the authorization server response:
-    print("XXXXXXXXXXXX", type(flow))
+    # print("XXXXXXXXXXXX", type(flow))
     state = session['state']
     # flow = jsonpickle.decode(session['flow'])
     # print("XXXXXXXXXIII", type(flow))
+
+    flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
+    'client_secret_217930784500-l9noq9hdupkormpjoamplnvsp3078q88.apps.googleusercontent.com.json',
+    scopes = ['profile', 'email', 'openid']
+    )
+    print("AAAAAAAAAAAA", type(flow))
+    flow.redirect_uri = url_for('processAuthCallback', _external = True)
+    print("AAAAAAAAAAAA", type(flow))
+
     # Use the authorization server's response to fetch the OAuth 2.0 tokens:
     authorization_response = request.url
     authorization_response = authorization_response.strip()

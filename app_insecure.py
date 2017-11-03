@@ -10,7 +10,7 @@ from flask import Flask, render_template, session, redirect, request, url_for
 app=Flask(__name__)
 app.secret_key = 'Random value' #TODO: Replace this secret key with an actual secure secret key.
 
-flow = None
+# flow = None
 loginJustBegun = True
 
 @app.route('/')
@@ -70,7 +70,7 @@ def authorize():
     # Construct the Flow object:
     # global flow # TODO: Remove the global and ask StackOverflow why the flow.fetch_token() call in processAuthCallback() throws a "global value flow is not defined" error. Global values are apparently not great programming practice in python.
     session.clear()
-    global flow
+    # global flow
     flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
     'client_secret_217930784500-l9noq9hdupkormpjoamplnvsp3078q88.apps.googleusercontent.com.json',
     scopes = ['profile', 'email', 'openid']
@@ -95,7 +95,7 @@ def authorize():
     # Store the state so the callback can verify the auth server response:
     session['state'] = state
     # session['flow'] = jsonpickle.encode(flow)
-    # print("XXXXXXXXXAAA", session['flow'])
+    # print("XXXXXXXXXAAA", type(jsonpickle.decode(session.get('flow'))))
     # print("XXXXXXXXXHHH", type(jsonpickle.decode(session['flow'])))
 
     return redirect(authorization_url)
@@ -104,10 +104,16 @@ def authorize():
 @app.route('/login/oauth2callback')
 def processAuthCallback():
     # Specify the state when creating the flow in the callback so that it can verified in the authorization server response:
-    print("XXXXXXXXXXXX", type(flow))
     state = session['state']
     # flow = jsonpickle.decode(session['flow'])
     # print("XXXXXXXXXIII", type(flow))
+
+    flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
+    'client_secret_217930784500-l9noq9hdupkormpjoamplnvsp3078q88.apps.googleusercontent.com.json',
+    scopes = ['profile', 'email', 'openid']
+    )
+    flow.redirect_uri = url_for('processAuthCallback', _external = True)
+
     # Use the authorization server's response to fetch the OAuth 2.0 tokens:
     authorization_response = request.url.strip()
     flow.fetch_token(authorization_response = authorization_response)
