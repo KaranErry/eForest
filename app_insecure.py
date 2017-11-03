@@ -4,6 +4,8 @@ import oauth2client
 from googleapiclient.discovery import build
 import os
 import jsonpickle
+import json
+import requests
 
 from flask import Flask, render_template, session, redirect, request, url_for
 
@@ -53,13 +55,42 @@ def processLogin():
     if 'credentials' not in session:
         print("IIIIIIIIIIIIIII creds not in session")
         return redirect(url_for('authorize'))
-    print (session)
+    # print (session)
     print("IXIXIXIXIXIXIXI creds in session")
 
     # Load credentials from the session:
-    credentials = google.oauth2.credentials.Credentials(jsonpickle.decode(session['credentials']))
-    userInfo = build('oauth2', 'v1', credentials=credentials)
-    return "Hello world!"
+    credentials = google.oauth2.credentials.Credentials(**session['credentials'])
+
+    # Load the Open ID Discovery Document from Google's URL and then unpack it into a JSON dict:
+    # discoveryDoc = json.loads(requests.get('https://accounts.google.com/.well-known/openid-configuration').text)
+
+    # Make HTTPS GET request to the user-info endpoint
+    # print(jsonpickle.encode(credentials))
+    # payload = {'token': credentials.token}
+    # print(payload)
+
+    # print(json.loads(jsonpickle.encode(credentials))['token']['token'])
+    # response = json.loads(requests.get(discoveryDoc['userinfo_endpoint'], params=payload).text)
+
+    # response = requests.get('https://www.googleapis.com/plus/v1/people/me/openIdConnect', params=payload)
+    # print("URURURURURURURURURURU")
+    # print(json.loads(response.text))
+
+    # print(",\n".join(", ".split(json.loads(response.text))))
+
+    # Load credentials from the session:
+    # credentials = google.oauth2.credentials.Credentials(jsonpickle.decode(session['credentials']))
+    oauth = build('oauth2', 'v2', credentials=credentials)
+    print (type(oauth))
+    userinfo = oauth.userinfo().get().execute()
+    print(type(userinfo))
+    print (userinfo)
+    # print("YTYTYTYTYTYTYTY creds", type(credentials))
+    # print(jsonpickle.encode(credentials))
+    # print("TYTYTYTYTYTYTYT userinfo", type(userInfo))
+    # print(userInfo)
+    return "Hello, " + userinfo['name'] + "!"
+    # return ("Hello, ", json.load(userinfo).get('name'), '!')
     # TODO: (Eventually) Since the hd parameter in the authorization can be modified by the user, check that the user signed in with a drew.edu email and if not, log them out and direct to the login landing page again.
     # TODO: Obtain user's profile info
     # TODO: Store user's profile info in persistent storage.
@@ -73,7 +104,11 @@ def authorize():
     # global flow
     flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
     'client_secret_217930784500-l9noq9hdupkormpjoamplnvsp3078q88.apps.googleusercontent.com.json',
-    scopes = ['profile', 'email', 'openid']
+    scopes = [
+    'profile',
+    'email',
+    # 'openid'
+    ]
     )
     print("XXXXXXXXXXXX", type(flow))
     # flow = oauth2client.flow_from_clientsecrets(
@@ -110,7 +145,11 @@ def processAuthCallback():
 
     flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
     'client_secret_217930784500-l9noq9hdupkormpjoamplnvsp3078q88.apps.googleusercontent.com.json',
-    scopes = ['profile', 'email', 'openid']
+    scopes = [
+    'profile',
+    'email',
+    # 'openid'
+    ]
     )
     flow.redirect_uri = url_for('processAuthCallback', _external = True)
 
@@ -121,11 +160,19 @@ def processAuthCallback():
     # TODO: When migrating to production, store these credentials in a persistent database instead.
     credentials = flow.credentials
     # session['credentials'] = credentials_to_dict(credentials)
-    session['credentials'] = jsonpickle.encode(credentials)
+    session['credentials'] = credentials_to_dict(credentials)
 
     global loginJustBegun
     loginJustBegun = False
     return redirect(url_for('processLogin'))
+
+def credentials_to_dict(credentials):
+  return {'token': credentials.token,
+          'refresh_token': credentials.refresh_token,
+          'token_uri': credentials.token_uri,
+          'client_id': credentials.client_id,
+          'client_secret': credentials.client_secret,
+          'scopes': credentials.scopes}
 
 
 
