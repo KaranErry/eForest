@@ -61,20 +61,16 @@ def login():
 
     # TODO: Store user's profile info in persistent storage.
 
-    # This section of commented-out code is specifically for converting the login flow to OIDC-compliant in the future
-        # Load the Open ID Discovery Document from Google's URL and then unpack it into a JSON dict:
-        # discoveryDoc = json.loads(requests.get('https://accounts.google.com/.well-known/openid-configuration').text)
-
     return "Hello, " + userinfo['name'] + "!"
 
 # Log user out of app by revoking auth credentials
 @app.route('/identity/logout')
 def logout():
     if 'credentials' in session:
-        credentials = google.oauth2.credentials.Credentials(
-          **session['credentials'])
-
-        revoke = requests.post('https://accounts.google.com/o/oauth2/revoke',
+        # Load the credentials from the session:
+        credentials = google.oauth2.credentials.Credentials(**session['credentials'])
+        # Request the auth server to revoke the specified credentials:
+        requests.post('https://accounts.google.com/o/oauth2/revoke',
             params={'token': credentials.token},
             headers = {'content-type': 'application/x-www-form-urlencoded'})
 
@@ -143,4 +139,4 @@ def credentials_to_dict(credentials):
 
 if __name__== "__main__":
     os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
-    app.run('localhost', 8080, debug=True)
+    app.run('localhost', 5000, debug=True)
