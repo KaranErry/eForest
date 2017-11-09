@@ -73,6 +73,8 @@ def logout():
         requests.post('https://accounts.google.com/o/oauth2/revoke',
             params={'token': credentials.token},
             headers = {'content-type': 'application/x-www-form-urlencoded'})
+        # Delete the credentials from the session cookie:
+        del session['credentials']
 
     return redirect(url_for('identity'))
 

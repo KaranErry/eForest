@@ -73,6 +73,8 @@ def logout():
         requests.post('https://accounts.google.com/o/oauth2/revoke',
             params={'token': credentials.token},
             headers = {'content-type': 'application/x-www-form-urlencoded'})
+        # Delete the credentials from the session cookie:
+        del session['credentials']
 
     return redirect(url_for('identity'))
 
@@ -139,4 +141,4 @@ def credentials_to_dict(credentials):
 
 if __name__== "__main__":
     os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
-    app.run('localhost', 5000, debug=True)
+    app.run('localhost', 8080, debug=True)
