@@ -9,8 +9,7 @@ from flask import Flask, render_template, session, redirect, request, url_for
 app=Flask(__name__)
 app.secret_key = 'Random value' #TODO: Replace this secret key with an actual secure secret key.
 
-# flow = None
-loginJustBegun = True
+loginJustBegun = True   # FOR TESTING
 
 @app.route('/')
 def home():
@@ -63,8 +62,13 @@ def processLogin():
     # Call methods on the service object to return a response with the user's info:
     userinfo = oauth.userinfo().get().execute()
 
-    # TODO: (Eventually) Since the hd parameter in the authorization can be modified by the user, check that the user signed in with a drew.edu email and if not, log them out and direct to the login landing page again.
     # TODO: Obtain user's profile info
+    # Verify that the user signed in with a 'drew.edu' email address:
+    validDomain = userinfo['hd'] == 'drew.edu'
+    if not validDomain:
+        pass
+
+    # TODO: (Eventually) Since the hd parameter in the authorization can be modified by the user, check that the user signed in with a drew.edu email and if not, log them out and direct to the login landing page again.
     # TODO: Store user's profile info in persistent storage.
 
     # This section of commented-out code is specifically for converting the login flow to OIDC-compliant in the future
@@ -109,7 +113,8 @@ def processAuthCallback():
     # Reconstruct the flow object:
     flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
     'client_secret_217930784500-l9noq9hdupkormpjoamplnvsp3078q88.apps.googleusercontent.com.json',
-    scopes = ['profile', 'email'])
+    scopes = ['profile', 'email'],
+    state = state)
     flow.redirect_uri = url_for('processAuthCallback', _external = True)
 
     # Use the authorization server's response to fetch the OAuth 2.0 tokens:

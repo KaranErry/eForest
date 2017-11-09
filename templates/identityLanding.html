@@ -29,16 +29,16 @@
     <a class="navbar-brand" id="header" href="/">eForest</a>
     <div id="allRight">
     <ul class="nav navbar-nav navbar-right" id="login" >
-      <button class="btn btn-danger"><a href="/login" id="login">Login</a></button>
+      <button class="btn btn-danger"><a href="/identity" id="login">Login</a></button>
     </ul>
     <ul class="nav navbar-nav navbar-right" id="dropdown" >
       <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Forms
       <span class="caret"></span></button>
       <ul class="dropdown-menu">
-        <li><a href="/studentForm">Student Form</a></li>
-        <li><a href="/professorForm">Professor Form</a></li>
-        <li><a href="/departmentHeadForm">Department Head Form</a></li>
-        <li><a href="/deanForm">Dean/Registrar Form</a></li>
+        <li><a href="/forms/studentForm">Student Form</a></li>
+        <li><a href="/forms/professorForm">Professor Form</a></li>
+        <li><a href="/forms/departmentHeadForm">Department Head Form</a></li>
+        <li><a href="/forms/deanForm">Dean/Registrar Form</a></li>
       </ul>
     </ul >
     </div>
@@ -87,6 +87,11 @@
         </div>
     </div>
 </div>
-<a href="/login/processLogin">Login with Google</a>
+<div>
+    <a href="/identity/login">Login with Google</a>
+</div>
+<div>
+    <a href="/identity/logout">Revoke Credentials</a>
+</div>
 </body>
 </html>
