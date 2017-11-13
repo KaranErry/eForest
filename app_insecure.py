@@ -62,7 +62,7 @@ def login():
     conn = psycopg2.connect(database = "d2h7mc7fbep9fg", user = "ayqraqktgwqdwa", password = "2ae940eb19dca2ea77e40352d8a36ddaf964c9240053a5ea3252da2a63a35132", host = "ec2-54-163-255-181.compute-1.amazonaws.com", port = "5432")
 
     # TODO: Store user's profile info in persistent storage.
-    return "Hello, " + userinfo['name'] + "!"+ "and opened db"
+    return "Hello, " + userinfo['name'] + "!"+ "and opened database"
 
 # Log user out of app by revoking auth credentials
 @app.route('/identity/logout')
