@@ -4,8 +4,8 @@ import oauth2client
 from googleapiclient.discovery import build
 import os
 import requests
-
 from flask import Flask, render_template, session, redirect, request, url_for
+import psycopg2
 
 app=Flask(__name__)
 app.secret_key = 'Random value' #TODO: Replace this secret key with an actual secure secret key.
@@ -43,28 +43,26 @@ def identity():
 @app.route('/identity/login')
 def login():
     if 'credentials' not in session:
-        # No user session is active
-        return redirect(url_for('authorize'))
-    try:
-        # Load credentials from the session:
-        credentials = google.oauth2.credentials.Credentials(**session['credentials'])
-        # Build the service object for the Google OAuth v2 API:
-        oauth = build('oauth2', 'v2', credentials=credentials)
-        # Call methods on the service object to return a response with the user's info:
-        userinfo = oauth.userinfo().get().execute()
-    except google.auth.exceptions.RefreshError:
-        # Credentials are stale
         return redirect(url_for('authorize'))
 
-    # Verify that the user signed in with a 'drew.ed' email address:
+    # Load credentials from the session:
+    credentials = google.oauth2.credentials.Credentials(**session['credentials'])
+    # Build the service object for the Google OAuth v2 API:
+    oauth = build('oauth2', 'v2', credentials=credentials)
+    # Call methods on the service object to return a response with the user's info:
+    userinfo = oauth.userinfo().get().execute()
+
+    # Verify whether the user signed in with a 'drew.ed' email address:
     if 'hd' in userinfo: validDomain = userinfo['hd'] == 'drew.edu'
     else:                validDomain = False
     if not validDomain:
-        return render_template('domainInvalid.html')
+        print ("You signed in with a non-drew.edu a/c.")
+        return redirect(url_for('logout'))
 
-    # TODO : Store user's profile info in persistent storage.
+    conn = psycopg2.connect(database = "d2h7mc7fbep9fg", user = "ayqraqktgwqdwa", password = "2ae940eb19dca2ea77e40352d8a36ddaf964c9240053a5ea3252da2a63a35132", host = "ec2-54-163-255-181.compute-1.amazonaws.com", port = "5432")
 
-    return "Hello, " + userinfo['name'] + "!"
+    # TODO: Store user's profile info in persistent storage.
+    return "Hello, " + userinfo['name'] + "!"+ "and opened db"
 
 # Log user out of app by revoking auth credentials
 @app.route('/identity/logout')
@@ -78,10 +76,8 @@ def logout():
             headers = {'content-type': 'application/x-www-form-urlencoded'})
         # Delete the credentials from the session cookie:
         del session['credentials']
-    if 'doNext' in request.args and request.args['doNext'] == 'login':
-        return redirect(url_for('login'))
-    else:
-        return render_template('logoutSuccess.html')
+
+    return redirect(url_for('identity'))
 
 # Authorize using OAuth
 @app.route('/identity/login/authorize')
