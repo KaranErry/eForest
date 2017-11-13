@@ -5,7 +5,7 @@ from googleapiclient.discovery import build
 import os
 import requests
 
-from flask import Flask, render_template, session, redirect, request, url_for, flash
+from flask import Flask, render_template, session, redirect, request, url_for
 
 app=Flask(__name__)
 app.secret_key = 'Random value' #TODO: Replace this secret key with an actual secure secret key.
@@ -60,7 +60,7 @@ def login():
     if 'hd' in userinfo: validDomain = userinfo['hd'] == 'drew.edu'
     else:                validDomain = False
     if not validDomain:
-        return redirect(url_for('domainInvalid'))
+        return render_template('domainInvalid.html')
 
     # TODO : Store user's profile info in persistent storage.
 
@@ -132,12 +132,6 @@ def oauth2callback():
     session['credentials'] = credentials_to_dict(flow.credentials)
 
     return redirect(url_for('login'))
-
-# Display invalid-sign-in page and prompt for re-login:
-@app.route('/identity/domainInvalid')
-def domainInvalid():
-    print ("You signed in with a non-drew.edu a/c.")
-    return render_template('domainInvalid.html')
 
 
 # HELPER FUNCTIONS
