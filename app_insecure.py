@@ -43,23 +43,26 @@ def identity():
 @app.route('/identity/login')
 def login():
     if 'credentials' not in session:
+        # No user session is active
+        return redirect(url_for('authorize'))
+    try:
+        # Load credentials from the session:
+        credentials = google.oauth2.credentials.Credentials(**session['credentials'])
+        # Build the service object for the Google OAuth v2 API:
+        oauth = build('oauth2', 'v2', credentials=credentials)
+        # Call methods on the service object to return a response with the user's info:
+        userinfo = oauth.userinfo().get().execute()
+    except google.auth.exceptions.RefreshError:
+        # Credentials are stale
         return redirect(url_for('authorize'))
 
-    # Load credentials from the session:
-    credentials = google.oauth2.credentials.Credentials(**session['credentials'])
-    # Build the service object for the Google OAuth v2 API:
-    oauth = build('oauth2', 'v2', credentials=credentials)
-    # Call methods on the service object to return a response with the user's info:
-    userinfo = oauth.userinfo().get().execute()
-
-    # Verify whether the user signed in with a 'drew.ed' email address:
+    # Verify that the user signed in with a 'drew.ed' email address:
     if 'hd' in userinfo: validDomain = userinfo['hd'] == 'drew.edu'
     else:                validDomain = False
     if not validDomain:
-        print ("You signed in with a non-drew.edu a/c.")
-        return redirect(url_for('logout'))
+        return render_template('domainInvalid.html')
 
-    # TODO: Store user's profile info in persistent storage.
+    # TODO : Store user's profile info in persistent storage.
 
     return "Hello, " + userinfo['name'] + "!"
 
@@ -75,8 +78,10 @@ def logout():
             headers = {'content-type': 'application/x-www-form-urlencoded'})
         # Delete the credentials from the session cookie:
         del session['credentials']
-
-    return redirect(url_for('identity'))
+    if 'doNext' in request.args and request.args['doNext'] == 'login':
+        return redirect(url_for('login'))
+    else:
+        return render_template('logoutSuccess.html')
 
 # Authorize using OAuth
 @app.route('/identity/login/authorize')
