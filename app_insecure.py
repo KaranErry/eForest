@@ -162,7 +162,7 @@ def landingStudent():
         cur.execute(prog_insert, (student['majors'], studentid))
         cur.execute(prog_insert, (student['minors'], studentid))
         cur.execute(prog_insert, (student['programs'], studentid))
-        # TODO handle multiple of each field except studentGradYear && posibiltiy of not having any
+        # TODO handle multiple of each field except studentGradYear && posibiltiy of not having any && the possibility of duplicate submission attempts
 
         print( student )
 
