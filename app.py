@@ -51,7 +51,6 @@ def login():
         # No user session is active
         return redirect(url_for('authorize'))
     try:
-        print("XIXIIXIXI LOGGED IN")
         # Load credentials from the session:
         credentials = google.oauth2.credentials.Credentials(**session['credentials'])
         # Build the service object for the Google OAuth v2 API:
@@ -90,10 +89,10 @@ def login():
     else:
         if entryStudent!=None:
             if username in entryStudent:
-                return render_template("landingHome.html", userinfo=userinfo)
+                return render_template("landingStudent.html", userinfo=userinfo)
         elif entryProf!=None:
             if username in entryProf:
-                return render_template("landingHome.html", userinfo=userinfo)
+                return render_template("landingProf.html", userinfo=userinfo)
         else:
             return render_template("newUser.html", userinfo=userinfo)
 
@@ -116,29 +115,52 @@ def landingHome():
             entries=cur.execute("INSERT INTO student_p (id, first_name, last_name, expected_grad) VALUES(%s, %s, %s, %s)", (userinfo['email'][:userinfo['email'].index('@')], userinfo['given_name'], userinfo['family_name'], None))
             conn.commit()
             conn.close()
-            return render_template("landingHome.html", userinfo=userinfo)
+            return render_template("landingStudent.html", userinfo=userinfo)
         elif selectOption =="DepartmentHead":
             entries=cur.execute("INSERT INTO prof_m (id, first_name, last_name, dept_abbr) VALUES(%s,%s,%s,%s)",(userinfo['email'][:userinfo['email'].index('@')], userinfo['given_name'], userinfo['family_name'],None, True))
             conn.close()
-            return render_template("landingHome.html", userinfo=userinfo)
+            return render_template("landingDeptHead.html", userinfo=userinfo)
         elif selectOption =="Professor":
             entries=cur.execute("INSERT INTO prof_m (id, first_name, last_name, dept_abbr) VALUES(%s,%s,%s,%s)",(userinfo['email'][:userinfo['email'].index('@')], userinfo['given_name'], userinfo['family_name'], None, False))
             conn.commit()
             conn.close()
-            return render_template("landingHome.html", userinfo=userinfo)
+            return render_template("landingProf.html", userinfo=userinfo)
 
-        # print(selectOption+ userinfo['name'])
+@app.route('/landingStudent', methods=["POST","GET"])
+def landingStudent():
+    if request.method == "POST":
+        studentMajor=request.form.get("studentMajor")
+        studentMinor= request.form.get("studentMinor")
+        studentProgram= request.form.get("studentProgram")
+        studentCoursePref= request.form.get("studentCoursePref")
+        studentGradYear= request.form.get("studentGradYear")
+        # Load credentials from the session:
+        credentials = google.oauth2.credentials.Credentials(**session['credentials'])
+        # Build the service object for the Google OAuth v2 API:
+        oauth = build('oauth2', 'v2', credentials=credentials)
+        # Call methods on the service object to return a response with the user's info:
+        userinfo = oauth.userinfo().get().execute()
 
-    return render_template("landingHome.html", userinfo)
-    # if username i
-    # print(username)
-    #
-    # # data=cur.execute("SELECT * FROM student_p WHERE first_name== userinfo['given_name'])
-    # print(userinfo['given_name'])
-    # print(userinfo['family_name'])
-    # print("inside database")
-    # TODO: Store user's profile info in persistent storage.
-# Log user out of app by revoking auth credentials
+        conn = psycopg2.connect(database = "d2h7mc7fbep9fg", user = "ayqraqktgwqdwa", password = "2ae940eb19dca2ea77e40352d8a36ddaf964c9240053a5ea3252da2a63a35132", host = "ec2-54-163-255-181.compute-1.amazonaws.com", port = "5432")
+        cur = conn.cursor()
+
+        cur.execute("INSERT INTO program_m(name, type) VALUES(%s,%s)", (studentMajor, "major"))
+        cur.execute("INSERT INTO program_m(name, type) VALUES(%s,%s)", (studentMinor, "minor"))
+        cur.execute("INSERT INTO program_m(name, type) VALUES(%s,%s)", (studentProgram, "program"))
+
+
+        print(studentMajor, studentMinor, studentProgram, studentCoursePref, studentGradYear)
+
+    return render_template("landingStudent.html", userinfo=userinfo)
+
+@app.route('/landingProf', methods=["POST","GET"])
+def landingProf():
+    return render_template("landingProf.html")
+
+@app.route('/landingDeptHead', methods=["POST","GET"])
+def landingDeptHead():
+    return render_template("landingDeptHead.html")
+
 @app.route('/identity/logout')
 def logout():
     if 'credentials' in session:
@@ -154,6 +176,10 @@ def logout():
         return redirect(url_for('login'))
     else:
         return render_template('logoutSuccess.html')
+
+@app.route('/search', methods=["POST","GET"])
+def search():
+    return render_template("search.html")
 
 # Authorize using OAuth
 @app.route('/identity/login/authorize')
@@ -200,7 +226,6 @@ def oauth2callback():
     flow.fetch_token(authorization_response = authorization_response)
 
     # Store credentials in the session:
-    # TODO: When migrating to production, store these credentials in a persistent database instead.
     session['credentials'] = credentials_to_dict(flow.credentials)
 
     return redirect(url_for('login'))
@@ -208,7 +233,6 @@ def oauth2callback():
 # Display invalid-sign-in page and prompt for re-login:
 @app.route('/identity/domainInvalid')
 def domainInvalid():
-    print ("You signed in with a non-drew.edu a/c.")
     return render_template('domainInvalid.html')
 
 

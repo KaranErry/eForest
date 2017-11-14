@@ -52,7 +52,6 @@ def login():
         # No user session is active
         return redirect(url_for('authorize'))
     try:
-        print("XIXIIXIXI LOGGED IN")
         # Load credentials from the session:
         credentials = google.oauth2.credentials.Credentials(**session['credentials'])
         # Build the service object for the Google OAuth v2 API:
@@ -251,7 +250,6 @@ def oauth2callback():
     flow.fetch_token(authorization_response = authorization_response)
 
     # Store credentials in the session:
-    # TODO: When migrating to production, store these credentials in a persistent database instead.
     session['credentials'] = credentials_to_dict(flow.credentials)
 
     return redirect(url_for('login'))
@@ -259,7 +257,6 @@ def oauth2callback():
 # Display invalid-sign-in page and prompt for re-login:
 @app.route('/identity/domainInvalid')
 def domainInvalid():
-    print ("You signed in with a non-drew.edu a/c.")
     return render_template('domainInvalid.html')
 
 
