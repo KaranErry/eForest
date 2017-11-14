@@ -111,10 +111,7 @@ def landingHome():
         conn = psycopg2.connect(database = "d2h7mc7fbep9fg", user = "ayqraqktgwqdwa", password = "2ae940eb19dca2ea77e40352d8a36ddaf964c9240053a5ea3252da2a63a35132", host = "ec2-54-163-255-181.compute-1.amazonaws.com", port = "5432")
         cur = conn.cursor()
         print("got to 113")
-<<<<<<< HEAD
         print(selectOption)
-=======
->>>>>>> cebafb8ab1a3f1e3c1615d8a8e59497ecf8bc41e
 
         if selectOption == "Student":
             entries=cur.execute("INSERT INTO student_p (id, first_name, last_name, expected_grad) VALUES(%s, %s, %s, %s)", (userinfo['email'][:userinfo['email'].index('@')], userinfo['given_name'], userinfo['family_name'], None))
