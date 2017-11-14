@@ -4,8 +4,8 @@ import oauth2client
 from googleapiclient.discovery import build
 import os
 import requests
-
 from flask import Flask, render_template, session, redirect, request, url_for
+import psycopg2
 
 app=Flask(__name__)
 app.secret_key = 'Random value' #TODO: Replace this secret key with an actual secure secret key.
@@ -60,12 +60,29 @@ def login():
     if 'hd' in userinfo: validDomain = userinfo['hd'] == 'drew.edu'
     else:                validDomain = False
     if not validDomain:
-        return render_template('domainInvalid.html')
+        return redirect(url_for('domainInvalid'))
 
-    # TODO : Store user's profile info in persistent storage.
+    conn = psycopg2.connect(database = "d2h7mc7fbep9fg", user = "ayqraqktgwqdwa", password = "2ae940eb19dca2ea77e40352d8a36ddaf964c9240053a5ea3252da2a63a35132", host = "ec2-54-163-255-181.compute-1.amazonaws.com", port = "5432")
+    cur = conn.cursor()
 
-    return "Hello, " + userinfo['name'] + "!"
+    username = userinfo['email'][:userinfo['email'].index('@')]
+    entries=cur.execute("SELECT id FROM student_p")
 
+    if username==entries:
+        return render_template("landingHome.html", userinfo=userinfo)
+    else:
+        return "Hello, " + userinfo['name'] + "you are not in the DB"
+
+
+
+    # if username i
+    # print(username)
+    #
+    # # data=cur.execute("SELECT * FROM student_p WHERE first_name== userinfo['given_name'])
+    # print(userinfo['given_name'])
+    # print(userinfo['family_name'])
+    # print("inside database")
+    # TODO: Store user's profile info in persistent storage.
 # Log user out of app by revoking auth credentials
 @app.route('/identity/logout')
 def logout():
@@ -132,6 +149,12 @@ def oauth2callback():
     session['credentials'] = credentials_to_dict(flow.credentials)
 
     return redirect(url_for('login'))
+
+# Display invalid-sign-in page and prompt for re-login:
+@app.route('/identity/domainInvalid')
+def domainInvalid():
+    print ("You signed in with a non-drew.edu a/c.")
+    return render_template('domainInvalid.html')
 
 
 # HELPER FUNCTIONS
