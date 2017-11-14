@@ -1,0 +1,126 @@
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<style>
+#login{
+  text-decoration:none;
+  color:white;
+  /*padding-left: 10px;*/
+}
+#nav{
+  padding-right: 50px;
+}
+#allRight{
+  padding-top: 10px;
+}
+#h3{
+  color: black;
+}
+#dropdown{
+  padding-right: 20px;
+}
+p{
+  padding-left: 100px;
+  padding-right: 100px;
+}
+#studentBorder{
+  width: 90%;
+  height: 20%;
+}
+</style>
+<body>
+  <nav class="navbar navbar-inverse bg-inverse" id="nav">
+    <a class="navbar-brand" id="header" href="/">eForest</a>
+    <div id="allRight">
+    <ul class="nav navbar-nav navbar-right" id="login" >
+      <button class="btn btn-danger"><a href="/identity/logout" id="login">Log Out</a></button>
+    </ul>
+  </nav>
+  <div class="container" id="studentBorder">
+    <div class="row">
+        <div class="col-xs-12 col-sm-6 col-md-4">
+            <div class="well well-sm">
+                <div class="row">
+                    <div class="col-sm-6 col-md-4">
+                        <img src="{{userinfo['picture']}}" alt="" class="img-rounded img-responsive" />
+                    </div>
+                    <div class="col-sm-6 col-md-8">
+                        <h4>{{userinfo['name']}}</h4>
+                        <i class="glyphicon glyphicon-envelope"></i>{{userinfo['email']}}
+                        <br>
+                        <i class= "glyphicon glyphicon-ok"></i> Student
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="col-xs-12 col-sm-6 col-md-8">
+            <div class="well well-md">
+                <div class="row">
+                    <form action="/landingStudent" method="post">
+                      <div class="form-group">
+                        <label for="studentMajor" >What is your Major?</label>
+                        <select class="form-control" id="studentMajor" name="studentMajor">
+                          <option>Computer Science</option>
+                          <option>Business</option>
+                          <option>Economics</option>
+                          <option>Math</option>
+                          <option>Physics</option>
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <label for="studentMinor" >What is you Minor?</label>
+                        <select class="form-control" id="studentMinor" name="studentMinor">
+                          <option>Art</option>
+                          <option>Biology </option>
+                          <option>Chemistry</option>
+                          <option>Anthropology</option>
+                          <option>Sociology</option>
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <label for="studentProgram">What is the program?</label>
+                        <select class="form-control" id="studentProgram" name="studentProgram">
+                          <option>Social Entrepreneurship Program</option>
+                          <option>Wall Street Program</option>
+                          <option>Communications Program</option>
+                          <option>Art Program</option>
+                          <option>Theatre Program</option>
+                        </select>
+                      </div>
+
+                      <!-- NOTE: to work on for next iteration -->
+                      <!-- <div class="form-group">
+                        <label for="exampleSelect2" name="studentCoursePref">What are your course preferences for next semester?</label>
+                        <br>
+                          <input></input>
+                          <input></input>
+                          <input></input>
+                          <input></input>
+                          <input></input>
+                      </div> -->
+                      <!-- <div class="form-group">
+                        <label for="studentGradYear">When your expected Graduation Year?</label>
+                        <select multiple class="form-control" id="studentGradYear" name="studentGradYear">
+                          <option>2017</option>
+                          <option>2018</option>
+                          <option>2019</option>
+                          <option>2020</option>
+                          <option>2021</option>
+                        </select>
+                      </div> -->
+                      <center><button type="submit" class="btn btn-primary">Submit</button></center>
+                    </div>
+                    </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+</body>
+</html>
