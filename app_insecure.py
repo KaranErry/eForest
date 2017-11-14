@@ -111,6 +111,8 @@ def landingHome():
 
         conn = psycopg2.connect(database = "d2h7mc7fbep9fg", user = "ayqraqktgwqdwa", password = "2ae940eb19dca2ea77e40352d8a36ddaf964c9240053a5ea3252da2a63a35132", host = "ec2-54-163-255-181.compute-1.amazonaws.com", port = "5432")
         cur = conn.cursor()
+        print("got to 113")
+        print(selectOption)
 
         if selectOption == "Student":
             entries=cur.execute("INSERT INTO student_p (id, first_name, last_name, expected_grad) VALUES(%s, %s, %s, %s)", (userinfo['email'][:userinfo['email'].index('@')], userinfo['given_name'], userinfo['family_name'], None))
@@ -122,7 +124,9 @@ def landingHome():
             conn.close()
             return render_template("landingDeptHead.html", userinfo=userinfo)
         elif selectOption =="Professor":
+            print("got to 125")
             entries=cur.execute("INSERT INTO prof_m (id, first_name, last_name, dept_abbr) VALUES(%s,%s,%s,%s)",(userinfo['email'][:userinfo['email'].index('@')], userinfo['given_name'], userinfo['family_name'], None, False))
+            print("got to 127")
             conn.commit()
             conn.close()
             return render_template("landingProf.html", userinfo=userinfo)
@@ -157,9 +161,6 @@ def landingStudent():
         # Insert the info
         prog_insert = "INSERT INTO program_members_m VALUES (%s,%s)"
         studentid = userinfo['email'][:userinfo['email'].index('@')]
-
-        # # TODO TODO TODO TODO TODO DELETE BELOW LINE !!!!!
-        # cur.execute("DELETE FROM program_members_m WHERE student=\'%s\'", studentid)
 
         cur.execute(prog_insert, (student['majors'], studentid))
         cur.execute(prog_insert, (student['minors'], studentid))
