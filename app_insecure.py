@@ -10,6 +10,12 @@ import psycopg2
 app=Flask(__name__)
 app.secret_key = 'Random value' #TODO: Replace this secret key with an actual secure secret key.
 
+def after_request(response):
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    response.headers["Expires"] = 0
+    response.headers["Pragma"] = "no-cache"
+    return response
+
 @app.route('/')
 def home():
     return render_template('home.html')
@@ -46,12 +52,14 @@ def login():
         # No user session is active
         return redirect(url_for('authorize'))
     try:
+        print("XIXIIXIXI LOGGED IN")
         # Load credentials from the session:
         credentials = google.oauth2.credentials.Credentials(**session['credentials'])
         # Build the service object for the Google OAuth v2 API:
         oauth = build('oauth2', 'v2', credentials=credentials)
         # Call methods on the service object to return a response with the user's info:
         userinfo = oauth.userinfo().get().execute()
+        print(userinfo)
     except google.auth.exceptions.RefreshError:
         # Credentials are stale
         return redirect(url_for('authorize'))
@@ -66,15 +74,63 @@ def login():
     cur = conn.cursor()
 
     username = userinfo['email'][:userinfo['email'].index('@')]
-    entries=cur.execute("SELECT id FROM student_p")
 
-    if username==entries:
-        return render_template("landingHome.html", userinfo=userinfo)
+    print(username)
+
+    cur.execute("SELECT id FROM student_p WHERE id= (%s)", (username,))
+    entryStudent = cur.fetchone()
+    # print(entryStudent)
+    cur.execute("SELECT id FROM prof_m  WHERE id= (%s)", (username,))
+    entryProf= cur.fetchone()
+
+    print(type(entryStudent), type(entryProf))
+
+
+    if entryStudent== None and entryProf== None:
+        return render_template("newUser.html", userinfo=userinfo)
     else:
-        return "Hello, " + userinfo['name'] + "you are not in the DB"
+        if entryStudent!=None:
+            if username in entryStudent:
+                return render_template("landingHome.html", userinfo=userinfo)
+        elif entryProf!=None:
+            if username in entryProf:
+                return render_template("landingHome.html", userinfo=userinfo)
+        else:
+            return render_template("newUser.html", userinfo=userinfo)
 
 
+@app.route('/landingHome', methods=["POST", "GET"])
+def landingHome():
+    if request.method == "POST":
+        selectOption=request.form.get("select")
+        # Load credentials from the session:
+        credentials = google.oauth2.credentials.Credentials(**session['credentials'])
+        # Build the service object for the Google OAuth v2 API:
+        oauth = build('oauth2', 'v2', credentials=credentials)
+        # Call methods on the service object to return a response with the user's info:
+        userinfo = oauth.userinfo().get().execute()
 
+        conn = psycopg2.connect(database = "d2h7mc7fbep9fg", user = "ayqraqktgwqdwa", password = "2ae940eb19dca2ea77e40352d8a36ddaf964c9240053a5ea3252da2a63a35132", host = "ec2-54-163-255-181.compute-1.amazonaws.com", port = "5432")
+        cur = conn.cursor()
+
+        if selectOption == "Student":
+            entries=cur.execute("INSERT INTO student_p (id, first_name, last_name, expected_grad) VALUES(%s, %s, %s, %s)", (userinfo['email'][:userinfo['email'].index('@')], userinfo['given_name'], userinfo['family_name'], None))
+            conn.commit()
+            conn.close()
+            return render_template("landingHome.html", userinfo=userinfo)
+        elif selectOption =="DepartmentHead":
+            entries=cur.execute("INSERT INTO prof_m (id, first_name, last_name, dept_abbr) VALUES(%s,%s,%s,%s)",(userinfo['email'][:userinfo['email'].index('@')], userinfo['given_name'], userinfo['family_name'],None, True))
+            conn.close()
+            return render_template("landingHome.html", userinfo=userinfo)
+        elif selectOption =="Professor":
+            entries=cur.execute("INSERT INTO prof_m (id, first_name, last_name, dept_abbr) VALUES(%s,%s,%s,%s)",(userinfo['email'][:userinfo['email'].index('@')], userinfo['given_name'], userinfo['family_name'], None, False))
+            conn.commit()
+            conn.close()
+            return render_template("landingHome.html", userinfo=userinfo)
+
+        # print(selectOption+ userinfo['name'])
+
+    return render_template("landingHome.html", userinfo)
     # if username i
     # print(username)
     #
