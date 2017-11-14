@@ -158,6 +158,9 @@ def landingStudent():
         prog_insert = "INSERT INTO program_members_m VALUES (%s,%s)"
         studentid = userinfo['email'][:userinfo['email'].index('@')]
 
+        # # TODO TODO TODO TODO TODO DELETE BELOW LINE !!!!!
+        # cur.execute("DELETE FROM program_members_m WHERE student=\'%s\'", studentid)
+
         cur.execute(prog_insert, (student['majors'], studentid))
         cur.execute(prog_insert, (student['minors'], studentid))
         cur.execute(prog_insert, (student['programs'], studentid))
