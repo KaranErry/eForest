@@ -40,37 +40,102 @@ $(document).ready(function(e){
 });
 </script>
 <body>
-  <nav class="navbar navbar-inverse bg-inverse" id="nav">
-    <a class="navbar-brand" id="header" href="/">eForest</a>
-    <div id="allRight">
-  </nav>
-  <center><h3> Searching time .... </h3></center>
+    <nav class="navbar navbar-inverse bg-inverse" id="nav">
+      <a class="navbar-brand" id="header" href="/">eForest</a>
+      <div id="allRight">
+      <ul class="nav navbar-nav navbar-right" id="login" >
+        <button class="btn btn-danger"><a href="/identity/logout" id="login">Log Out</a></button>
+      </ul>
+    </nav>
 
-  <div class="container">
-    <div class="row">
-        <div class="col-xs-8 col-xs-offset-2">
-		    <div class="input-group">
-                <div class="input-group-btn search-panel">
-                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                    	<span id="search_concept">Filter by</span> <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu" role="menu">
-                      <li><a href="#contains">Contains</a></li>
-                      <li><a href="#its_equal">It's equal</a></li>
-                      <li><a href="#greather_than">Greather than ></a></li>
-                      <li><a href="#less_than">Less than < </a></li>
-                      <li class="divider"></li>
-                      <li><a href="#all">Anything</a></li>
-                    </ul>
-                </div>
-                <input type="hidden" name="search_param" value="all" id="search_param">
-                <input type="text" class="form-control" name="x" placeholder="Search term...">
-                <span class="input-group-btn">
-                    <button class="btn btn-primary" type="button"><span class="glyphicon glyphicon-search"></span></button>
-                </span>
-            </div>
-        </div>
-	</div> -->
-<!-- </div>
+  <center><h1>Displaying the Data...</h1></center>
+  <br><br>
+
+  <center><h3>Table 'program_members_m':</h3></center>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">program id</th>
+        <th scope="col">student id</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in program_members %}
+        <tr>
+          <td>{{row[0]}}</td>
+          <td>{{row[1]}}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <br>
+
+  <center><h3>Table 'program_m':</h3></center>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">program id</th>
+        <th scope="col">program name</th>
+        <th scope="col">type</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in program %}
+        <tr>
+          <td>{{row[0]}}</td>
+          <td>{{row[1]}}</td>
+          <td>{{row[2]}}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <br>
+
+  <center><h3>Table 'student_m':</h3></center>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">student id</th>
+        <th scope="col">first name</th>
+        <th scope="col">last name</th>
+        <th scope="col">expected grad</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in student %}
+        <tr>
+          <td>{{row[0]}}</td>
+          <td>{{row[1]}}</td>
+          <td>{{row[2]}}</td>
+          <td>{{row[3]}}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <br>
+
+  <center><h3>Table 'prof_m':</h3></center>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">prof id</th>
+        <th scope="col">first name</th>
+        <th scope="col">last name</th>
+        <th scope="col">dept abbr</th>
+        <th scope="col">is dept head ?</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in prof %}
+        <tr>
+          <td>{{row[0]}}</td>
+          <td>{{row[1]}}</td>
+          <td>{{row[2]}}</td>
+          <td>{{row[3]}}</td>
+          <td>{{row[4]}}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 </body>
 </html>

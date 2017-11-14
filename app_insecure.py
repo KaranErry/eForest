@@ -175,7 +175,7 @@ def landingStudent():
         conn.commit()
         conn.close()
 
-    return render_template("landingStudent.html", userinfo=userinfo)
+    return render_template("studentSubmitSuccess.html", userinfo=userinfo)
 
 @app.route('/landingProf', methods=["POST","GET"])
 def landingProf():
@@ -203,7 +203,25 @@ def logout():
 
 @app.route('/search', methods=["POST","GET"])
 def search():
-    return render_template("search.html")
+    # Load credentials from the session:
+    credentials = google.oauth2.credentials.Credentials(**session['credentials'])
+    # Build the service object for the Google OAuth v2 API:
+    oauth = build('oauth2', 'v2', credentials=credentials)
+    # Call methods on the service object to return a response with the user's info:
+    userinfo = oauth.userinfo().get().execute()
+
+    conn = psycopg2.connect(database = "d2h7mc7fbep9fg", user = "ayqraqktgwqdwa", password = "2ae940eb19dca2ea77e40352d8a36ddaf964c9240053a5ea3252da2a63a35132", host = "ec2-54-163-255-181.compute-1.amazonaws.com", port = "5432")
+    cur = conn.cursor()
+
+    cur.execute("SELECT * FROM program_members_m")
+    program_members_ENTIRE = cur.fetchall()
+    cur.execute("SELECT * FROM program_m")
+    program_ENTIRE = cur.fetchall()
+    cur.execute("SELECT * FROM student_p")
+    student_ENTIRE = cur.fetchall()
+    cur.execute("SELECT * FROM prof_m")
+    prof_ENTIRE = cur.fetchall()
+    return render_template("search.html", program_members=program_members_ENTIRE, program=program_ENTIRE, student=student_ENTIRE, prof=prof_ENTIRE)
 
 # Authorize using OAuth
 @app.route('/identity/login/authorize')
