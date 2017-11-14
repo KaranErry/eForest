@@ -183,6 +183,12 @@ def logout():
 def search():
     return render_template("search.html")
 
+# def showStudents():
+#     return render_template()
+#
+# def showProfs():
+#     return render_template()
+
 # Authorize using OAuth
 @app.route('/identity/login/authorize')
 def authorize():
