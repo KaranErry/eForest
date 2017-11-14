@@ -1,12 +1,13 @@
 -- Name characters: 50
+-- Username chars: 64
 
 CREATE TABLE Dept_M (
 	abbr VARCHAR(4) PRIMARY KEY,
-	chair BIGINT
+	chair VARCHAR(64)
 );
 
 CREATE TABLE Prof_M (
-	id BIGSERIAL PRIMARY KEY,
+	id VARCHAR(64) PRIMARY KEY,
 	first_name VARCHAR(50) NOT NULL,
 	last_name VARCHAR(50) NOT NULL,
 	dept_abbr VARCHAR(4) REFERENCES Dept_M NOT NULL
@@ -21,7 +22,7 @@ CREATE TABLE Course_M (
 
 
 CREATE TABLE Student_P (
-	id BIGSERIAL PRIMARY KEY,
+	id VARCHAR(64) PRIMARY KEY,
 	first_name VARCHAR(50) NOT NULL,
 	last_name VARCHAR(50) NOT NULL,
 	expected_grad BIT(15)
@@ -36,7 +37,7 @@ CREATE TABLE Program_M (
 
 CREATE TABLE Program_Members_M (
 	program SMALLINT REFERENCES Program_M,
-	student BIGINT REFERENCES Student_P,
+	student VARCHAR(64) REFERENCES Student_P,
 	PRIMARY KEY (program, student)
 );
 
@@ -50,7 +51,7 @@ CREATE TABLE Program_Courses_M (
 
 CREATE TABLE Course_Listing_S (
 	section SERIAL PRIMARY KEY,
-	professor BIGINT REFERENCES Prof_M,
+	professor VARCHAR(64) REFERENCES Prof_M,
 	course_name VARCHAR(4) NOT NULL,
 	course_number INT2 NOT NULL,
 	seat_cap INT2,
@@ -58,7 +59,7 @@ CREATE TABLE Course_Listing_S (
 );
 
 CREATE TABLE Course_Pref_S (
-	student BIGINT REFERENCES Student_P,
+	student VARCHAR(64) REFERENCES Student_P,
 	course_name VARCHAR(4),
 	course_number INT2,
 	FOREIGN KEY (course_name, course_number) REFERENCES Course_M (dept_abbr, number),
@@ -76,7 +77,7 @@ CREATE TABLE Prof_Timing_S (
 	section INT REFERENCES Course_Listing_S,
 	block SMALLINT REFERENCES Time_Block_M,
 	preference TIME_PREF,
-	PRIMARY KEY ( section, block ) 
+	PRIMARY KEY ( section, block )
 );
 
 CREATE TABLE Room_M (
