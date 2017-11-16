@@ -1,11 +1,9 @@
-import google_auth_oauthlib.flow
-import google.oauth2.credentials
-import oauth2client
-from googleapiclient.discovery import build
-import os
-import requests
 from flask import Flask, render_template, session, redirect, request, url_for
+from googleapiclient.discovery import build
+import google_auth_oauthlib.flow, google.oauth2.credentials, oauth2client
+import requests
 import psycopg2
+import os
 
 app=Flask(__name__)
 app.secret_key = 'Random value' #TODO: Replace this secret key with an actual secure secret key.
@@ -111,8 +109,6 @@ def landingHome():
 
         conn = psycopg2.connect(database = "d2h7mc7fbep9fg", user = "ayqraqktgwqdwa", password = "2ae940eb19dca2ea77e40352d8a36ddaf964c9240053a5ea3252da2a63a35132", host = "ec2-54-163-255-181.compute-1.amazonaws.com", port = "5432")
         cur = conn.cursor()
-        print("got to 113")
-        print(selectOption)
 
         if selectOption == "Student":
             entries=cur.execute("INSERT INTO student_p (id, first_name, last_name, expected_grad) VALUES(%s, %s, %s, %s)", (userinfo['email'][:userinfo['email'].index('@')], userinfo['given_name'], userinfo['family_name'], None))
@@ -120,13 +116,13 @@ def landingHome():
             conn.close()
             return render_template("landingStudent.html", userinfo=userinfo)
         elif selectOption =="DepartmentHead":
-            entries=cur.execute("INSERT INTO prof_m (id, first_name, last_name, dept_abbr) VALUES(%s,%s,%s,%s)",(userinfo['email'][:userinfo['email'].index('@')], userinfo['given_name'], userinfo['family_name'],None, True))
+            entries=cur.execute("INSERT INTO prof_m VALUES(%s,%s,%s,%s,%s)",(userinfo['email'][:userinfo['email'].index('@')], userinfo['given_name'], userinfo['family_name'],None, True))
+            conn.commit()
             conn.close()
             return render_template("landingDeptHead.html", userinfo=userinfo)
         elif selectOption =="Professor":
             print("got to 125")
-            entries=cur.execute("INSERT INTO prof_m (id, first_name, last_name, dept_abbr) VALUES(%s,%s,%s,%s)",(userinfo['email'][:userinfo['email'].index('@')], userinfo['given_name'], userinfo['family_name'], None, False))
-            print("got to 127")
+            entries=cur.execute("INSERT INTO prof_m VALUES(%s,%s,%s,%s,%s)",(userinfo['email'][:userinfo['email'].index('@')], userinfo['given_name'], userinfo['family_name'], None, False))
             conn.commit()
             conn.close()
             return render_template("landingProf.html", userinfo=userinfo)
@@ -200,6 +196,7 @@ def logout():
             headers = {'content-type': 'application/x-www-form-urlencoded'})
         # Delete the credentials from the session cookie:
         del session['credentials']
+
     if 'doNext' in request.args and request.args['doNext'] == 'login':
         return redirect(url_for('login'))
     else:
