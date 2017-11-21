@@ -3,6 +3,7 @@ from googleapiclient.discovery import build
 import google_auth_oauthlib.flow, google.oauth2.credentials, oauth2client
 import requests
 import psycopg2
+import os
 
 app=Flask(__name__)
 app.secret_key = 'Random value' #TODO: Replace this secret key with an actual secure secret key.
@@ -81,13 +82,16 @@ def login():
 
     print(type(entryStudent), type(entryProf))
 
+    studentIn= False
+    professorIn= False
 
     if entryStudent== None and entryProf== None:
         return render_template("newUser.html", userinfo=userinfo)
     else:
         if entryStudent!=None:
             if username in entryStudent:
-                return render_template("landingStudent.html", userinfo=userinfo)
+                studentIn= True
+                return render_template("landingStudent.html", userinfo=userinfo, studentIn=studentIn)
         elif entryProf!=None:
             if username in entryProf:
                 return render_template("landingProf.html", userinfo=userinfo)
@@ -98,6 +102,9 @@ def login():
 @app.route('/landingHome', methods=["POST", "GET"])
 def landingHome():
     if request.method == "POST":
+        conn = psycopg2.connect(database = "d2h7mc7fbep9fg", user = "ayqraqktgwqdwa", password = "2ae940eb19dca2ea77e40352d8a36ddaf964c9240053a5ea3252da2a63a35132", host = "ec2-54-163-255-181.compute-1.amazonaws.com", port = "5432")
+        cur = conn.cursor()
+        studentIn= False
         selectOption=request.form.get("select")
         # Load credentials from the session:
         credentials = google.oauth2.credentials.Credentials(**session['credentials'])
@@ -106,14 +113,11 @@ def landingHome():
         # Call methods on the service object to return a response with the user's info:
         userinfo = oauth.userinfo().get().execute()
 
-        conn = psycopg2.connect(database = "d2h7mc7fbep9fg", user = "ayqraqktgwqdwa", password = "2ae940eb19dca2ea77e40352d8a36ddaf964c9240053a5ea3252da2a63a35132", host = "ec2-54-163-255-181.compute-1.amazonaws.com", port = "5432")
-        cur = conn.cursor()
-
         if selectOption == "Student":
             entries=cur.execute("INSERT INTO student_p (id, first_name, last_name, expected_grad) VALUES(%s, %s, %s, %s)", (userinfo['email'][:userinfo['email'].index('@')], userinfo['given_name'], userinfo['family_name'], None))
             conn.commit()
             conn.close()
-            return render_template("landingStudent.html", userinfo=userinfo)
+            return render_template("landingStudent.html", userinfo=userinfo, studentIn=studentIn)
         elif selectOption =="DepartmentHead":
             entries=cur.execute("INSERT INTO prof_m VALUES(%s,%s,%s,%s,%s)",(userinfo['email'][:userinfo['email'].index('@')], userinfo['given_name'], userinfo['family_name'],None, True))
             conn.commit()
@@ -162,7 +166,7 @@ def landingStudent():
         cur.execute(prog_insert, (student['programs'], studentid))
         # TODO handle multiple of each field except studentGradYear && posibiltiy of not having any && the possibility of duplicate submission attempts
 
-        print( student )
+        print( student['majors'], student['minors'])
 
         # TEST
         cur.execute("SELECT * FROM student_p")
@@ -173,8 +177,9 @@ def landingStudent():
         cur.close()
         conn.commit()
         conn.close()
+        studentIn= True
 
-    return render_template("studentSubmitSuccess.html", userinfo=userinfo)
+    return render_template("landingStudent.html", userinfo=userinfo, studentIn=studentIn)
 
 @app.route('/landingProf', methods=["POST","GET"])
 def landingProf():
@@ -222,6 +227,12 @@ def search():
     cur.execute("SELECT * FROM prof_m")
     prof_ENTIRE = cur.fetchall()
     return render_template("search.html", program_members=program_members_ENTIRE, program=program_ENTIRE, student=student_ENTIRE, prof=prof_ENTIRE)
+
+# def showStudents():
+#     return render_template()
+#
+# def showProfs():
+#     return render_template()
 
 # Authorize using OAuth
 @app.route('/identity/login/authorize')
@@ -289,4 +300,5 @@ def credentials_to_dict(credentials):
           'scopes': credentials.scopes}
 
 if __name__== "__main__":
-    app.run(debug=True)
+    os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
+    app.run('localhost', 8080, debug=True)

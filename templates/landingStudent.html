@@ -31,7 +31,36 @@ p{
   width: 90%;
   height: 20%;
 }
+#displayIfUser{
+  display: none;
+}
+#formForNewUsers{
+  display:none;
+}
+/*.loader {
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid blue;
+  border-right: 16px solid green;
+  border-bottom: 16px solid red;
+  border-left: 16px solid pink;
+  width: 120px;
+  height: 120px;
+  -webkit-animation: spin 2s linear infinite;
+  animation: spin 2s linear infinite;
+}
+
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}*/
 </style>
+
 <body>
   <nav class="navbar navbar-inverse bg-inverse" id="nav">
     <a class="navbar-brand" id="header" href="/">eForest</a>
@@ -58,9 +87,13 @@ p{
             </div>
         </div>
         <br>
-        <div class="col-xs-12 col-sm-6 col-md-8">
+        <div class="col-xs-12 col-sm-6 col-md-8" >
             <div class="well well-md">
-                <div class="row">
+              <!-- <div class="row" id="loading">
+                <center><h3>Adding to Database...</h3></center>
+                <center><div class="loader"></div></center>
+              </div> -->
+                <div class="row" id="formForNewUsers">
                     <form action="/landingStudent" method="post">
                       <div class="form-group">
                         <label for="studentMajor" >What is your Major?</label>
@@ -94,31 +127,35 @@ p{
                         </select>
                       </div>
 
-                      <!-- NOTE: to work on for next iteration -->
-                      <!-- <div class="form-group">
-                        <label for="exampleSelect2" name="studentCoursePref">What are your course preferences for next semester?</label>
-                        <br>
-                          <input></input>
-                          <input></input>
-                          <input></input>
-                          <input></input>
-                          <input></input>
-                      </div> -->
-                      <!-- <div class="form-group">
-                        <label for="studentGradYear">When your expected Graduation Year?</label>
-                        <select multiple class="form-control" id="studentGradYear" name="studentGradYear">
-                          <option>2017</option>
-                          <option>2018</option>
-                          <option>2019</option>
-                          <option>2020</option>
-                          <option>2021</option>
-                        </select>
-                      </div> -->
                       <center><button type="submit" class="btn btn-primary">Submit</button></center>
                     </div>
                     </form>
+                    <div class="row" id="displayIfUser">
+                      <center><h2>Thank you for submitting your form!</h2></center>
+
+                    </div>
             </div>
         </div>
+        <script>
+          // function loadingWait(){
+          //   document.getElementById("loading");
+          // }
+
+          studentIn= "{{studentIn}}";
+          var userInDB = document.getElementById("displayIfUser");
+          var userNotInDB = document.getElementById("formForNewUsers");
+          var loading= document.getElementById("loading");
+
+          console.log(studentIn, userInDB, userNotInDB, loading);
+          if(studentIn=== "True"){
+            // setTimeout("loadingWait", 3000);
+            // loading.style.display= "none";
+            userInDB.style.display ="block";
+          }else{
+            // loading.style.display= "none";
+            userNotInDB.style.display="block"
+          }
+        </script>
     </div>
 </div>
 

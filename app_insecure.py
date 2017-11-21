@@ -82,13 +82,16 @@ def login():
 
     print(type(entryStudent), type(entryProf))
 
+    studentIn= False
+    professorIn= False
 
     if entryStudent== None and entryProf== None:
         return render_template("newUser.html", userinfo=userinfo)
     else:
         if entryStudent!=None:
             if username in entryStudent:
-                return render_template("landingStudent.html", userinfo=userinfo)
+                studentIn= True
+                return render_template("landingStudent.html", userinfo=userinfo, studentIn=studentIn)
         elif entryProf!=None:
             if username in entryProf:
                 return render_template("landingProf.html", userinfo=userinfo)
@@ -99,6 +102,9 @@ def login():
 @app.route('/landingHome', methods=["POST", "GET"])
 def landingHome():
     if request.method == "POST":
+        conn = psycopg2.connect(database = "d2h7mc7fbep9fg", user = "ayqraqktgwqdwa", password = "2ae940eb19dca2ea77e40352d8a36ddaf964c9240053a5ea3252da2a63a35132", host = "ec2-54-163-255-181.compute-1.amazonaws.com", port = "5432")
+        cur = conn.cursor()
+        studentIn= False
         selectOption=request.form.get("select")
         # Load credentials from the session:
         credentials = google.oauth2.credentials.Credentials(**session['credentials'])
@@ -107,14 +113,11 @@ def landingHome():
         # Call methods on the service object to return a response with the user's info:
         userinfo = oauth.userinfo().get().execute()
 
-        conn = psycopg2.connect(database = "d2h7mc7fbep9fg", user = "ayqraqktgwqdwa", password = "2ae940eb19dca2ea77e40352d8a36ddaf964c9240053a5ea3252da2a63a35132", host = "ec2-54-163-255-181.compute-1.amazonaws.com", port = "5432")
-        cur = conn.cursor()
-
         if selectOption == "Student":
             entries=cur.execute("INSERT INTO student_p (id, first_name, last_name, expected_grad) VALUES(%s, %s, %s, %s)", (userinfo['email'][:userinfo['email'].index('@')], userinfo['given_name'], userinfo['family_name'], None))
             conn.commit()
             conn.close()
-            return render_template("landingStudent.html", userinfo=userinfo)
+            return render_template("landingStudent.html", userinfo=userinfo, studentIn=studentIn)
         elif selectOption =="DepartmentHead":
             entries=cur.execute("INSERT INTO prof_m VALUES(%s,%s,%s,%s,%s)",(userinfo['email'][:userinfo['email'].index('@')], userinfo['given_name'], userinfo['family_name'],None, True))
             conn.commit()
@@ -163,7 +166,7 @@ def landingStudent():
         cur.execute(prog_insert, (student['programs'], studentid))
         # TODO handle multiple of each field except studentGradYear && posibiltiy of not having any && the possibility of duplicate submission attempts
 
-        print( student )
+        print( student['majors'], student['minors'])
 
         # TEST
         cur.execute("SELECT * FROM student_p")
@@ -174,8 +177,9 @@ def landingStudent():
         cur.close()
         conn.commit()
         conn.close()
+        studentIn= True
 
-    return render_template("studentSubmitSuccess.html", userinfo=userinfo)
+    return render_template("landingStudent.html", userinfo=userinfo, studentIn=studentIn)
 
 @app.route('/landingProf', methods=["POST","GET"])
 def landingProf():
