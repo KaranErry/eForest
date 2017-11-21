@@ -3,7 +3,6 @@ from googleapiclient.discovery import build
 import google_auth_oauthlib.flow, google.oauth2.credentials, oauth2client
 import requests
 import psycopg2
-import os
 
 app=Flask(__name__)
 app.secret_key = 'Random value' #TODO: Replace this secret key with an actual secure secret key.
@@ -94,7 +93,8 @@ def login():
                 return render_template("landingStudent.html", userinfo=userinfo, studentIn=studentIn)
         elif entryProf!=None:
             if username in entryProf:
-                return render_template("landingProf.html", userinfo=userinfo)
+                professorIn= True
+                return render_template("landingProf.html", userinfo=userinfo, professorIn=professorIn)
         else:
             return render_template("newUser.html", userinfo=userinfo)
 
@@ -300,5 +300,4 @@ def credentials_to_dict(credentials):
           'scopes': credentials.scopes}
 
 if __name__== "__main__":
-    os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
-    app.run('localhost', 8080, debug=True)
+    app.run(debug=True)

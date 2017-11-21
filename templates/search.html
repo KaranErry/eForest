@@ -98,7 +98,6 @@ $(document).ready(function(e){
         <th scope="col">student id</th>
         <th scope="col">first name</th>
         <th scope="col">last name</th>
-        <th scope="col">expected grad</th>
       </tr>
     </thead>
     <tbody>
@@ -107,7 +106,6 @@ $(document).ready(function(e){
           <td>{{row[0]}}</td>
           <td>{{row[1]}}</td>
           <td>{{row[2]}}</td>
-          <td>{{row[3]}}</td>
         </tr>
       {% endfor %}
     </tbody>
@@ -135,6 +133,33 @@ $(document).ready(function(e){
           <td>{{row[4]}}</td>
         </tr>
       {% endfor %}
+    </tbody>
+  </table>
+  <br>
+
+  <center><h3>Your entries:</h3></center>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">course</th>
+        <th scope="col">prof</th>
+        <th scope="col">seat cap</th>
+        <th scope="col">room features</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>CSCI 150</td>
+          <td>ehill1</td>
+          <td>35</td>
+          <td>outlets</td>
+        </tr>
+        <tr>
+          <td>DATA 200</td>
+          <td>rmercuri</td>
+          <td>40</td>
+          <td>outlets; whiteboards</td>
+        </tr>
     </tbody>
   </table>
 </body>

@@ -94,7 +94,8 @@ def login():
                 return render_template("landingStudent.html", userinfo=userinfo, studentIn=studentIn)
         elif entryProf!=None:
             if username in entryProf:
-                return render_template("landingProf.html", userinfo=userinfo)
+                professorIn= True
+                return render_template("landingProf.html", userinfo=userinfo, professorIn=professorIn)
         else:
             return render_template("newUser.html", userinfo=userinfo)
 

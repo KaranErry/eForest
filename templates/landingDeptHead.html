@@ -31,6 +31,9 @@ p{
   width: 90%;
   height: 20%;
 }
+#showSubmitted{
+    display: none;
+}
 </style>
 <script>
 function showSearch() {
@@ -58,7 +61,7 @@ function showSearch() {
                         <h4>{{userinfo['name']}}</h4>
                         <i class="glyphicon glyphicon-envelope"></i> {{userinfo['email']}}
                         <br>
-                        <i class= "glyphicon glyphicon-ok"></i> Professor
+                        <i class= "glyphicon glyphicon-ok"></i> Department Head
                     </div>
                 </div>
             </div>
@@ -68,80 +71,61 @@ function showSearch() {
         <br>
         <div class="col-xs-12 col-sm-6 col-md-8">
             <div class="well well-md">
+                <div id="showSubmitted">
+                    <center><h3>Thank you for submitting the form!</h3></center>
+                </div>
                 <div class="row">
                     <form>
-                      <div class="form-group">
-                        <label for="exampleInputEmail1">Email address</label>
-                        <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
-                        <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+                      <div class="form-group" id="askDepartment">
+                        <label for="exampleInputEmail1">Enter course offerings as a comma-separated list...</label>
+                        <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter courses...">
                       </div>
-                      <div class="form-group">
-                        <label for="exampleInputPassword1">Password</label>
-                        <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
-                      </div>
-                      <div class="form-group">
-                        <label for="exampleSelect1">Example select</label>
-                        <select class="form-control" id="exampleSelect1">
-                          <option>1</option>
-                          <option>2</option>
-                          <option>3</option>
-                          <option>4</option>
-                          <option>5</option>
-                        </select>
-                      </div>
-                      <div class="form-group">
-                        <label for="exampleSelect2">Example multiple select</label>
-                        <select multiple class="form-control" id="exampleSelect2">
-                          <option>1</option>
-                          <option>2</option>
-                          <option>3</option>
-                          <option>4</option>
-                          <option>5</option>
-                        </select>
-                      </div>
-                      <div class="form-group">
-                        <label for="exampleTextarea">Example textarea</label>
-                        <textarea class="form-control" id="exampleTextarea" rows="3"></textarea>
-                      </div>
-                      <div class="form-group">
-                        <label for="exampleInputFile">File input</label>
-                        <input type="file" class="form-control-file" id="exampleInputFile" aria-describedby="fileHelp">
-                        <small id="fileHelp" class="form-text text-muted">This is some placeholder block-level help text for the above input. It's a bit lighter and easily wraps to a new line.</small>
-                      </div>
-                      <fieldset class="form-group">
-                        <legend>Radio buttons</legend>
-                        <div class="form-check">
-                          <label class="form-check-label">
-                            <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios1" value="option1" checked>
-                            Option one is this and that&mdash;be sure to include why it's great
-                          </label>
+                        <div class="form-group" id="askTimes">
+                            <label for="exampleInputEmail1">For each course above, enter the username of the professor as a comma separated list...</label>
+                            <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter professor usernames...">
                         </div>
-                        <div class="form-check">
-                        <label class="form-check-label">
-                            <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios2" value="option2">
-                            Option two can be something else and selecting it will deselect option one
-                          </label>
-                        </div>
-                        <div class="form-check disabled">
-                        <label class="form-check-label">
-                            <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios3" value="option3" disabled>
-                            Option three is disabled
-                          </label>
-                        </div>
-                      </fieldset>
-                      <div class="form-check">
-                        <label class="form-check-label">
-                          <input type="checkbox" class="form-check-input">
-                          Check me out
-                        </label>
+                      <div class="form-group" id="seats">
+                        <label for="exampleInputEmail1">For each course above, enter the seatcap as integers in a comma separated list...</label>
+                        <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter seatcaps...">
                       </div>
-                      <button type="submit" class="btn btn-primary">Submit</button>
+                    <div class="form-group" id="roomfeatures">
+                      <label for="exampleInputEmail1">For each course above, enter the room features needed in a colon separated list within a comma separated list...</label>
+                      <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter room features...">
                     </div>
                     </form>
+                    <button class="btn btn-primary" onclick=afterSubmission() id="submitButton">Submit</button>
                   </div>
-            </div>
-
+        </div>
     </div>
+    <script>
+    function afterSubmission(){
+        var department= document.getElementById('askDepartment');
+        var times= document.getElementById('askTimes');
+        var showSubmit= document.getElementById('showSubmitted');
+        var seats= document.getElementById('seats');
+        var room= document.getElementById('roomfeatures');
+        var submitButton= document.getElementById('submitButton');
+
+        department.style.display ="none";
+        times.style.display ="none";
+        submitButton.style.display= "none";
+        showSubmit.style.display= "none";
+        submitButton.style.display= "none";
+        seats.style.display= "none";
+        room.style.display= "none";
+
+        showSubmit.style.display ="block";
+
+        professorIn= "{{professorIn}}";
+        console.log(professorIn);
+        if(professorIn === "True"){
+            department.style.display ="none";
+            times.style.display ="none";
+            submitButton.style.display= "none";
+            showSubmit.style.display ="block";
+        }
+    }
+    </script>
   </div>
 
 </div>
