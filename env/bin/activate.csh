@@ -7,7 +7,7 @@ alias deactivate 'test $?_OLD_VIRTUAL_PATH != 0 && setenv PATH "$_OLD_VIRTUAL_PA
 # Unset irrelevant variables.
 deactivate nondestructive
 
-setenv VIRTUAL_ENV "/Users/jhonatancruz/Desktop/Github/eForest/env"
+setenv VIRTUAL_ENV "/Users/karanerry/Drive/> DREW/>> sem-5 (F'17)/DATA BASES/"eForest" Group Project/eforest_dir/env"
 
 set _OLD_VIRTUAL_PATH="$PATH"
 setenv PATH "$VIRTUAL_ENV/bin:$PATH"

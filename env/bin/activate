@@ -40,7 +40,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="/Users/jhonatancruz/Desktop/Github/eForest/env"
+VIRTUAL_ENV="/Users/karanerry/Drive/> DREW/>> sem-5 (F'17)/DATA BASES/"eForest" Group Project/eforest_dir/env"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"

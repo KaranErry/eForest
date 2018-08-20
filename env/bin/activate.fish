@@ -36,7 +36,7 @@ end
 # Unset irrelevant variables.
 deactivate nondestructive
 
-set -gx VIRTUAL_ENV "/Users/jhonatancruz/Desktop/Github/eForest/env"
+set -gx VIRTUAL_ENV "/Users/karanerry/Drive/> DREW/>> sem-5 (F'17)/DATA BASES/"eForest" Group Project/eforest_dir/env"
 
 set -gx _OLD_VIRTUAL_PATH $PATH
 set -gx PATH "$VIRTUAL_ENV/bin" $PATH
